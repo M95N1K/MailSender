@@ -44,11 +44,9 @@ namespace MailSender.Works
                 }
                 catch
                 {
-                    AppErrors.AddError($"Ошибка при отправке письма по адрессу {recipient}");
+                    AppErrors.AddError($"Ошибка при отправке письма по адрессу \"{recipient}\"");
                 }
             }
-            if (AppErrors.Count > 0)
-                AppErrors.ShowErrors();
             return count;
         }
     }

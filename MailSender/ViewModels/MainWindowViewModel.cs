@@ -19,6 +19,7 @@ namespace MailSender.ViewModels
         private string title = "WPFMailSender";
         private string mailHeader = "Заголовок";
         private string mailBody = "Текст";
+        private string statusBarStatus = "Готово";
         private int countSendMail = 0;
         private List<string> recipientList = new List<string>()
         {
@@ -29,6 +30,7 @@ namespace MailSender.ViewModels
         public string Title { get => title; set => Set(ref title, value); }
         public string MailHeader { get => mailHeader; set => Set(ref mailHeader, value); }
         public string MailBody { get => mailBody; set => Set(ref mailBody, value); }
+        public string StatusBarStatus { get => statusBarStatus; set => Set(ref statusBarStatus, value); }
         public int CountSendMail { get => countSendMail; set => Set(ref countSendMail, value); }
         public List<string> RecipientList { get => recipientList; set => Set(ref recipientList, value); }
         public OptionsViewModel OptionsApp { get => optionsApp; set => Set(ref optionsApp, value); }
@@ -69,7 +71,11 @@ namespace MailSender.ViewModels
             StructMails mails;
             mails.body = MailBody;
             mails.header = MailHeader;
+            StatusBarStatus = "Отправка писем...";
             CountSendMail = SendMails.SendsMail(RecipientList, mails, "qwedsazxc");
+            StatusBarStatus = "Писем отправленно"; 
+            if (AppErrors.Count > 0)
+                AppErrors.ShowErrors();
         }
         private bool CanSendMailExecute(object p)
         {
@@ -115,7 +121,13 @@ namespace MailSender.ViewModels
 
             SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru", 25);
             GetOptions();
-            
+            AppErrors.OnShowErrors += AppErrors_OnShowErrors;
+        }
+
+        private void AppErrors_OnShowErrors()
+        {
+            ErrorWindow tmp = new ErrorWindow();
+            tmp.ShowDialog();
         }
 
         private void GetOptions()

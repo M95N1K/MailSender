@@ -108,7 +108,7 @@
             </TabItem>
         </TabControl>
         <StatusBar Grid.Row="2" Grid.Column="0">
-            <StatusBarItem Content="Отправленно писем" Width="150" HorizontalAlignment="Left"/>
+            <StatusBarItem Content="{Binding StatusBarStatus}" Width="150" HorizontalAlignment="Left"/>
             <StatusBarItem Content="{Binding CountSendMail}" Width="150" HorizontalAlignment="Left"/>
         </StatusBar>
     </Grid>

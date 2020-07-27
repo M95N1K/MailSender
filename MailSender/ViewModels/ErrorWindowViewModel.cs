@@ -43,6 +43,7 @@ namespace MailSender.ViewModels
             #region Создание команд
             CloseWindowCommand = new LambdaCommand(OnCloseWindowExecuted, CanCloseWindowExecute);
             #endregion
+
             Errors = AppErrors.GetErrors();
         }
     }
