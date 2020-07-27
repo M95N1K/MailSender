@@ -17,7 +17,9 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Grid.Column="0"  Height="25">
-            <MenuItem Header="Файл"/>
+            <MenuItem Header="Файл">
+                <MenuItem Header="Выход" Command="{Binding CloseApplicationCommand}"/>
+            </MenuItem>
             <MenuItem Header="О программе"/>
         </Menu>
         <TabControl Grid.Row="1" Grid.Column="0">
