@@ -16,6 +16,7 @@ namespace MailSender.ViewModels
     /// <summary>Класс взаимодействия с окном </summary>
     class MainWindowViewModel : ViewModel
     {
+        #region Поля
         private string title = "WPFMailSender";
         private string mailHeader = "Заголовок";
         private string mailBody = "Текст";
@@ -26,14 +27,17 @@ namespace MailSender.ViewModels
             "jonatan@mail.ru - вымышленно"
         };
         private OptionsViewModel optionsApp = new OptionsViewModel();
+        #endregion
 
+        #region Свойства
         public string Title { get => title; set => Set(ref title, value); }
         public string MailHeader { get => mailHeader; set => Set(ref mailHeader, value); }
         public string MailBody { get => mailBody; set => Set(ref mailBody, value); }
         public string StatusBarStatus { get => statusBarStatus; set => Set(ref statusBarStatus, value); }
         public int CountSendMail { get => countSendMail; set => Set(ref countSendMail, value); }
         public List<string> RecipientList { get => recipientList; set => Set(ref recipientList, value); }
-        public OptionsViewModel OptionsApp { get => optionsApp; set => Set(ref optionsApp, value); }
+        public OptionsViewModel OptionsApp { get => optionsApp; set => Set(ref optionsApp, value); } 
+        #endregion
 
         #region Команды
 
@@ -103,9 +107,23 @@ namespace MailSender.ViewModels
         {
             GetOptions();
         }
-        private bool CanAbortChangeOptionsExecute(object p) => true; 
+        private bool CanAbortChangeOptionsExecute(object p) => true;
         #endregion
 
+        #region Увеличение номера порта
+        public ICommand UpPortNumCommand { get; }
+        private void OnUpPortClick(object p)
+        {
+            OptionsApp.SmtpPort++;
+        }
+        private bool CanUpPortClick(object p) => true;
+        #endregion
+
+        #region Уменьшение номера порта
+        public ICommand DownPortNumCommand { get; }
+        private void OnDownPortClick(object p) => OptionsApp.SmtpPort--;
+        private bool CanDownPortClick(object p) => true; 
+        #endregion
 
         #endregion
 
@@ -117,6 +135,8 @@ namespace MailSender.ViewModels
             SendMailCommand = new LambdaCommand(OnSendMailExecuted, CanSendMailExecute);
             ApllyChangeOptionCommand = new LambdaCommand(OnApllyChageOptionsExecute, CanApllyChageOptionsExecute);
             AbortChangeOptionsCommand = new LambdaCommand(OnAbortChangeOptionsExecuted, CanAbortChangeOptionsExecute);
+            UpPortNumCommand = new LambdaCommand(OnUpPortClick, CanUpPortClick);
+            DownPortNumCommand = new LambdaCommand(OnDownPortClick, CanDownPortClick);
             #endregion
 
             SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru", 25);

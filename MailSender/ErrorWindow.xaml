@@ -7,23 +7,21 @@
         xmlns:local="clr-namespace:MailSender"
         mc:Ignorable="d"
         Title="Ошибка" Height="295" Width="565" ResizeMode="NoResize" 
-        WindowStartupLocation="CenterScreen" >
+        WindowStartupLocation="CenterScreen" Background="{DynamicResource ControlBackgroundBrush}" >
     <Window.DataContext>
         <vm:ErrorWindowViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <ListBox Padding="10,0" Grid.Row="0" ItemsSource="{Binding Errors}" Tag="" >
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Label Foreground="Red" FontWeight="Bold" FontSize="14" Content="{Binding}"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <Grid Grid.Row="1">
+        <Label Content="При работе программы возникли следующие ошибки!!!" Foreground="#FFFF2C2C" 
+               HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+               FontSize="16" FontWeight="Bold"/>
+        <ListBox Padding="10,0" Grid.Row="1" ItemsSource="{Binding Errors}" />
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="150"/>

@@ -28,9 +28,6 @@ namespace MailSender.Works
             smtpConf.sendersMail = sendersMail;
             smtpConf.smtpPort = port;
         }
-        //static public SmtpServerOptions GetConfig()
-        //{
-        //    return smtpConf;
-        //}
+        
     }
 }
