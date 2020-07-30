@@ -7,9 +7,12 @@ using System.Windows;
 using System.Windows.Input;
 using MailSender.Infrastructure.Commands;
 using MailSender.Models;
+using MailSender.Models.DBModels;
 using MailSender.ViewModels.Base;
 using MailSender.ViewModels;
 using MailSender.Works;
+using System.Data.Linq;
+using System.Xml.Linq;
 
 namespace MailSender.ViewModels
 {
@@ -27,6 +30,7 @@ namespace MailSender.ViewModels
             "jonatan@mail.ru - вымышленно"
         };
         private OptionsViewModel optionsApp = new OptionsViewModel();
+        EmilesDataContext db = new EmilesDataContext();
         #endregion
 
         #region Свойства
@@ -36,7 +40,8 @@ namespace MailSender.ViewModels
         public string StatusBarStatus { get => statusBarStatus; set => Set(ref statusBarStatus, value); }
         public int CountSendMail { get => countSendMail; set => Set(ref countSendMail, value); }
         public List<string> RecipientList { get => recipientList; set => Set(ref recipientList, value); }
-        public OptionsViewModel OptionsApp { get => optionsApp; set => Set(ref optionsApp, value); } 
+        public OptionsViewModel OptionsApp { get => optionsApp; set => Set(ref optionsApp, value); }
+        public IEnumerable<Email> DataEmails { get => from c in db.Email select c; }
         #endregion
 
         #region Команды
@@ -76,14 +81,15 @@ namespace MailSender.ViewModels
             mails.body = MailBody;
             mails.header = MailHeader;
             StatusBarStatus = "Отправка писем...";
+            GetEmilesToRecipient();
             CountSendMail = SendMails.SendsMail(RecipientList, mails, "qwedsazxc");
-            StatusBarStatus = "Писем отправленно"; 
+            StatusBarStatus = "Писем отправленно";
             if (AppErrors.Count > 0)
                 AppErrors.ShowErrors();
         }
         private bool CanSendMailExecute(object p)
         {
-            return (MailHeader !="" && MailBody !="" && RecipientList.Count > 0);
+            return (MailHeader != "" && MailBody != "" && RecipientList.Count > 0);
         }
         #endregion
 
@@ -122,7 +128,7 @@ namespace MailSender.ViewModels
         #region Уменьшение номера порта
         public ICommand DownPortNumCommand { get; }
         private void OnDownPortClick(object p) => OptionsApp.SmtpPort--;
-        private bool CanDownPortClick(object p) => true; 
+        private bool CanDownPortClick(object p) => true;
         #endregion
 
         #endregion
@@ -155,8 +161,35 @@ namespace MailSender.ViewModels
             #region SMTP Config
             OptionsApp.SendrsMail = SmtpConfig.SendersMail;
             OptionsApp.SmtpPort = SmtpConfig.Port;
-            OptionsApp.SmtpServ = SmtpConfig.SmtpServer; 
+            OptionsApp.SmtpServ = SmtpConfig.SmtpServer;
             #endregion
+        }
+
+        private int AddRecipient(string emails, string name)
+        {
+            int result = -1;
+            Email email = new Email();
+            email.Value = emails;
+            email.Name = name;
+            email.Id = db.Email.Max(n => n.Id) + 1;
+            result = email.Id;
+
+            try
+            {
+                db.Email.InsertOnSubmit(email);
+                db.SubmitChanges();
+            }
+            catch
+            {
+                AppErrors.AddError($"Ошибка добавления получателя ({email.Value} - {email.Name})");
+            }
+
+            return result;
+        }
+
+        private void GetEmilesToRecipient()
+        {
+            RecipientList = db.Email.Select(n => n.Value).ToList<string>();
         }
     }
 }
