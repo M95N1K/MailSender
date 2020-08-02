@@ -2,19 +2,22 @@
 {
     public static class PassCode
     {
-        private static string GetRepeatKey(string s, int n)
+        private static string GetNewKey(string s, int n)
         {
             string result = "";
-            for (int i = 0; i < s.Length; i++)
-            {
-                result += ((char)(s[i] ^ s[i % s.Length]));
+            while(n > 0){
+                for (int i = 0; i < s.Length; i++)
+                {
+                    result += ((char)(s[i] ^ s[s.Length - 1 - i]));
+                }
+                n--;
             }
             return result;
         }
 
         private static string Enciper(string pass, string key)
         {
-            string currentKey = GetRepeatKey(key, pass.Length);
+            string currentKey = GetNewKey(key, pass.Length);
             string res = currentKey[0].ToString();
             for (int i = 0; i < pass.Length; i++)
             {
@@ -28,7 +31,7 @@
         {
             string tmp = pass.Substring(1, pass.Length - 1);
             pass = tmp;
-            string currentKey = GetRepeatKey(key, pass.Length);
+            string currentKey = GetNewKey(key, pass.Length);
             string res = string.Empty;
             for (int i = 0; i < pass.Length; i++)
             {

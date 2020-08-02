@@ -157,7 +157,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Code\Code.csproj">
+      <Project>{6c3f6f45-56ff-4eb7-ba3d-8e5b11323fc6}</Project>
+      <Name>Code</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>

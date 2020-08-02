@@ -31,13 +31,31 @@
                         <ColumnDefinition Width="300"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <DataGrid Grid.Column="0" Margin="2,2" ItemsSource="{Binding DataEmails}" AutoGenerateColumns="False" IsReadOnly="True">
+                    <DataGrid Grid.Column="0" Margin="2,2" ItemsSource="{Binding DataEmails}" 
+                              AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="auto"/>
                             <DataGridTextColumn Header="Почта" Binding="{Binding Value}" Width="auto"/>
                             <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Margin="2,2" Grid.Row="0" Content="Почтовый адресс" VerticalContentAlignment="Center"/>
+                        <Label Margin="2,2" Grid.Row="2" Content="Имя" VerticalContentAlignment="Center"/>
+                        <TextBox Margin="2,2" Grid.Row="1" 
+                                 Text="{Binding NewEmail.Value, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Margin="2,2" Grid.Row="3" 
+                                 Text="{Binding NewEmail.Name, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Margin="2,2" Content="Добавить получателя" Grid.Row="4" Command="{Binding AddRecipientCommand}"/>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="Настройки отправителя" >

@@ -25,12 +25,12 @@ namespace MailSender.ViewModels
         private string mailBody = "Текст";
         private string statusBarStatus = "Готово";
         private int countSendMail = 0;
-        private List<string> recipientList = new List<string>()
-        {
-            "jonatan@mail.ru - вымышленно"
-        };
+        private int maxID;
+        private List<string> recipientList = new List<string>();
+        IEnumerable<Email> dataEmails;
         private OptionsViewModel optionsApp = new OptionsViewModel();
         EmilesDataContext db = new EmilesDataContext();
+        Email email = new Email() { Value = "", Name=""};
         #endregion
 
         #region Свойства
@@ -41,7 +41,14 @@ namespace MailSender.ViewModels
         public int CountSendMail { get => countSendMail; set => Set(ref countSendMail, value); }
         public List<string> RecipientList { get => recipientList; set => Set(ref recipientList, value); }
         public OptionsViewModel OptionsApp { get => optionsApp; set => Set(ref optionsApp, value); }
-        public IEnumerable<Email> DataEmails { get => from c in db.Email select c; }
+        public IEnumerable<Email> DataEmails { 
+            get 
+            {
+                //dataEmails = from c in db.Email select c;
+                return dataEmails;
+            }
+            set => Set(ref dataEmails, value); }
+        public Email NewEmail { get => email; set => Set(ref email, value); }
         #endregion
 
         #region Команды
@@ -131,6 +138,22 @@ namespace MailSender.ViewModels
         private bool CanDownPortClick(object p) => true;
         #endregion
 
+        #region Добавление получателя
+        public ICommand AddRecipientCommand { get; }
+        private void OnAddRecipientExecuted(object p)
+        { 
+            AddRecipient();
+            email.Name = "";
+            email.Value = "";
+        }
+        private bool CanAddRecipientExecute(object p)
+        {
+            if (email.Value != "" && email.Name != "")
+                return true;
+            return false;
+        }
+        #endregion
+
         #endregion
 
         public MainWindowViewModel()
@@ -143,11 +166,14 @@ namespace MailSender.ViewModels
             AbortChangeOptionsCommand = new LambdaCommand(OnAbortChangeOptionsExecuted, CanAbortChangeOptionsExecute);
             UpPortNumCommand = new LambdaCommand(OnUpPortClick, CanUpPortClick);
             DownPortNumCommand = new LambdaCommand(OnDownPortClick, CanDownPortClick);
+            AddRecipientCommand = new LambdaCommand(OnAddRecipientExecuted, CanAddRecipientExecute);
             #endregion
 
             SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru", 25);
             GetOptions();
             AppErrors.OnShowErrors += AppErrors_OnShowErrors;
+            maxID = db.Email.Max(n => n.Id);
+            DataEmails = from c in db.Email select c;
         }
 
         private void AppErrors_OnShowErrors()
@@ -165,25 +191,25 @@ namespace MailSender.ViewModels
             #endregion
         }
 
-        private int AddRecipient(string emails, string name)
+        private int AddRecipient()
         {
             int result = -1;
-            Email email = new Email();
-            email.Value = emails;
-            email.Name = name;
-            email.Id = db.Email.Max(n => n.Id) + 1;
-            result = email.Id;
-
+            Email e = new Email();
+            e.Value = email.Value;
+            e.Name = email.Name;
+            e.Id = ++maxID;
+            result = e.Id;
             try
             {
-                db.Email.InsertOnSubmit(email);
+                db.Email.InsertOnSubmit(e);
                 db.SubmitChanges();
             }
             catch
             {
                 AppErrors.AddError($"Ошибка добавления получателя ({email.Value} - {email.Name})");
             }
-
+            
+            DataEmails = from c in db.Email select c;
             return result;
         }
 
