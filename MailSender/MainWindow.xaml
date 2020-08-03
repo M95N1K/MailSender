@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailSender"
         xmlns:vm ="clr-namespace:MailSender.ViewModels"
-        xmlns:tk ="http://schemas.xceed.com/wpf/xaml/toolkit"
+        
+        xmlns:uv="clr-namespace:MailSender.View"
+        
         
         mc:Ignorable="d"
         Title="{Binding Title}" Height="450" Width="800">
@@ -26,154 +28,16 @@
         </Menu>
         <TabControl Grid.Row="1" Grid.Column="0">
             <TabItem Header="Список получателей">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <DataGrid Grid.Column="0" Margin="2,2" ItemsSource="{Binding DataEmails}" 
-                              AutoGenerateColumns="False" IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="auto"/>
-                            <DataGridTextColumn Header="Почта" Binding="{Binding Value}" Width="auto"/>
-                            <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <Grid Grid.Column="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Label Margin="2,2" Grid.Row="0" Content="Почтовый адресс" VerticalContentAlignment="Center"/>
-                        <Label Margin="2,2" Grid.Row="2" Content="Имя" VerticalContentAlignment="Center"/>
-                        <TextBox Margin="2,2" Grid.Row="1" 
-                                 Text="{Binding NewEmail.Value, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox Margin="2,2" Grid.Row="3" 
-                                 Text="{Binding NewEmail.Name, UpdateSourceTrigger=PropertyChanged}" />
-                        <Button Margin="2,2" Content="Добавить получателя" Grid.Row="4" Command="{Binding AddRecipientCommand}"/>
-                    </Grid>
-                </Grid>
+                <uv:RecipientView />
             </TabItem>
             <TabItem Header="Настройки отправителя" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition />
-                        <RowDefinition Height="30"/>
-                    </Grid.RowDefinitions>
-                    <GroupBox Header="Настройки отправителя">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="80"/>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="95"/>
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Label Margin="2,2" Content="SMTP Сервер" VerticalAlignment="Center" Grid.Column="0"/>
-                            <Label Margin="2,2" Content="Порт сервера" VerticalAlignment="Center" Grid.Column="2"/>
-                            <Label Margin="2,2" Content="Почтовый ящик" VerticalAlignment="Center" Grid.Column="4"/>
-                            <TextBox Margin="2,2" Grid.Column="1" 
-                                     Text="{Binding OptionsApp.SmtpServ, UpdateSourceTrigger=PropertyChanged}"/>
-                            <Grid Grid.Column="3">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="25"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Margin="2,2" Grid.Column="0" 
-                                     Text="{Binding OptionsApp.SmtpPort, UpdateSourceTrigger=PropertyChanged}"/>
-                                <Grid Grid.Column="1">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-                                    <Button Content="^" Grid.Row="0" Command="{Binding UpPortNumCommand}"/>
-                                    <Button Content="^" Grid.Row="1" Command="{Binding DownPortNumCommand}" 
-                                            RenderTransformOrigin="0.5,0.5">
-                                        <Button.RenderTransform>
-                                            <TransformGroup>
-                                                <ScaleTransform/>
-                                                <SkewTransform/>
-                                                <RotateTransform Angle="180"/>
-                                                <TranslateTransform/>
-                                            </TransformGroup>
-                                        </Button.RenderTransform>
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                            <TextBox Margin="2,2" Grid.Column="5" 
-                                     Text="{Binding OptionsApp.SendrsMail, UpdateSourceTrigger=PropertyChanged}"/>
-                        </Grid>
-                    </GroupBox>
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="100"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Margin="2,2" Content="Отмена" Grid.Column="2" Command="{Binding AbortChangeOptionsCommand}"/>
-                        <Button Margin="2,2" Content="Применить" Grid.Column="0" Command="{Binding ApllyChangeOptionCommand}"/>
-                    </Grid>
-                </Grid>
+                <uv:OptionSenderView />
             </TabItem>
             <TabItem Header="Письмо">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="30"/>
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Margin="2,2" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Заголовок письма"/>
-                        <TextBox Margin="2,2" Text="{Binding MailHeader, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" 
-                                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                    </Grid>
-                    <GroupBox Header="Текст письма" Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch"
-                              HorizontalAlignment="Stretch" >
-                        <TextBox TextWrapping="WrapWithOverflow" 
-                                 Text="{Binding MailBody, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="0"/>
-                    </GroupBox>
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Margin="2,2" Content="Отправить" Grid.Column="0" Command="{Binding SendMailCommand}" />
-                        <Button Margin="2,2" Content="Очистить" Grid.Column="1" Command="{Binding ClearMailDataCommand}" />
-                    </Grid>
-                </Grid>
+                <uv:MailView />
             </TabItem>
             <TabItem Header="Отправка">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="167"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Calendar Grid.Row="0"/>
-                        <tk:TimePicker Grid.Row="1" Margin="2,2" ShowDropDownButton="False" Text="0" />
-                        <Button Grid.Row="2" Content="Заплонировать" Margin="2,2"/>
-                        <Button Grid.Row="3" Content="Отправить" Command="{Binding SendMailCommand}" Margin="2,2"/>
-                    </Grid>
-                </Grid>
+                <uv:SendsView />
             </TabItem>
         </TabControl>
         <StatusBar Grid.Row="2" Grid.Column="0">

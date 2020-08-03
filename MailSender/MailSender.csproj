@@ -84,6 +84,18 @@
     </Compile>
     <Compile Include="ViewModels\ErrorWindowViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
+    <Compile Include="View\MailView.xaml.cs">
+      <DependentUpon>MailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\OptionSenderView.xaml.cs">
+      <DependentUpon>OptionSenderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RecipientView.xaml.cs">
+      <DependentUpon>RecipientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SendsView.xaml.cs">
+      <DependentUpon>SendsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Works\AppErrors.cs" />
     <Compile Include="Works\SendMails.cs" />
     <Compile Include="Works\SmtpConfig.cs" />
@@ -120,6 +132,22 @@
     <Page Include="Themes\ExpressionLight.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\MailView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\OptionSenderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RecipientView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SendsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

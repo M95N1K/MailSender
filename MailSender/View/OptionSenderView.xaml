@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="MailSender.View.OptionSenderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MailSender.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition />
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="135" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Label Content="Выберите отправителя" Margin="2,2" VerticalContentAlignment="Center" />
+            <ComboBox Margin="2,2" Grid.Column="1" ItemsSource="{Binding DataEmails}" 
+                                  SelectedValuePath="Id" DisplayMemberPath="Value" />
+        </Grid>
+        <GroupBox Header="Настройки отправителя" Grid.Row="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="95"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="95"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Label Margin="2,2" Content="Почтовый ящик" VerticalAlignment="Center" Grid.Column="0"/>
+                <Label Margin="2,2" Content="Пароль" VerticalAlignment="Center" Grid.Column="2"/>
+                <Label Margin="2,2" Content="SMTP Сервер" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+                <Label Margin="2,2" Content="Порт сервера" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2"/>
+                <TextBox Margin="2,2" Grid.Column="1" Grid.Row="1"
+                                     Text="{Binding OptionsApp.SmtpServ, UpdateSourceTrigger=PropertyChanged}"/>
+                <PasswordBox Margin="2,2" Grid.Column="3" Grid.Row="0" />
+                <Grid Grid.Column="3" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="25"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Margin="2,2" Grid.Column="0" 
+                                     Text="{Binding OptionsApp.SmtpPort, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Button Content="^" Grid.Row="0" Command="{Binding UpPortNumCommand}"/>
+                        <Button Content="^" Grid.Row="1" Command="{Binding DownPortNumCommand}" 
+                                            RenderTransformOrigin="0.5,0.5">
+                            <Button.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="180"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Button.RenderTransform>
+                        </Button>
+                    </Grid>
+                </Grid>
+                <TextBox Margin="2,2" Grid.Column="1" 
+                                     Text="{Binding OptionsApp.SendrsMail, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </GroupBox>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <Button Margin="2,2" Content="Отмена" Grid.Column="2" Command="{Binding AbortChangeOptionsCommand}"/>
+            <Button Margin="2,2" Content="Применить" Grid.Column="0" Command="{Binding ApllyChangeOptionCommand}"/>
+        </Grid>
+    </Grid>
+</UserControl>

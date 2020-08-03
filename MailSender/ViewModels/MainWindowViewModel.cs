@@ -17,7 +17,7 @@ using System.Xml.Linq;
 namespace MailSender.ViewModels
 {
     /// <summary>Класс взаимодействия с окном </summary>
-    class MainWindowViewModel : ViewModel
+    internal class MainWindowViewModel : ViewModel
     {
         #region Поля
         private string title = "WPFMailSender";
@@ -27,10 +27,10 @@ namespace MailSender.ViewModels
         private int countSendMail = 0;
         private int maxID;
         private List<string> recipientList = new List<string>();
-        IEnumerable<Email> dataEmails;
+        private IEnumerable<Email> dataEmails;
         private OptionsViewModel optionsApp = new OptionsViewModel();
-        EmilesDataContext db = new EmilesDataContext();
-        Email email = new Email() { Value = "", Name=""};
+        private readonly EmilesDataContext db = new EmilesDataContext();
+        private Email email = new Email() { Value = "", Name=""};
         #endregion
 
         #region Свойства
@@ -44,7 +44,6 @@ namespace MailSender.ViewModels
         public IEnumerable<Email> DataEmails { 
             get 
             {
-                //dataEmails = from c in db.Email select c;
                 return dataEmails;
             }
             set => Set(ref dataEmails, value); }
@@ -96,7 +95,7 @@ namespace MailSender.ViewModels
         }
         private bool CanSendMailExecute(object p)
         {
-            return (MailHeader != "" && MailBody != "" && RecipientList.Count > 0);
+            return (!MailHeader.Equals("") && MailBody != "" && RecipientList.Count > 0);
         }
         #endregion
 
@@ -145,6 +144,7 @@ namespace MailSender.ViewModels
             AddRecipient();
             email.Name = "";
             email.Value = "";
+            GetEmilesToRecipient();
         }
         private bool CanAddRecipientExecute(object p)
         {
@@ -174,6 +174,7 @@ namespace MailSender.ViewModels
             AppErrors.OnShowErrors += AppErrors_OnShowErrors;
             maxID = db.Email.Max(n => n.Id);
             DataEmails = from c in db.Email select c;
+            GetEmilesToRecipient();
         }
 
         private void AppErrors_OnShowErrors()
