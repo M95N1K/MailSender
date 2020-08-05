@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Code;
 using System.Threading.Tasks;
+using MailSender.Works;
 
 namespace MailSender.ViewModels
 {
@@ -10,10 +12,31 @@ namespace MailSender.ViewModels
     {
         private string smtpServ;
         private string sendrsMail;
+        private string sendersPass;
         private int smtpPort;
 
-        public string SmtpServ { get => smtpServ; set => Set(ref smtpServ, value); }
-        public string SendrsMail { get => sendrsMail; set => Set(ref sendrsMail, value); }
-        public int SmtpPort { get => smtpPort; set => Set(ref smtpPort, value); }
+        public string SmtpServ { 
+            get { 
+                return smtpServ;
+            } 
+            set => Set(ref smtpServ, value); }
+        public string SendrsMail {
+            get 
+            {
+                return sendrsMail; 
+            } 
+            set => Set(ref sendrsMail, value); }
+        public string SendrsPass {
+            get
+            {
+                return sendersPass;
+            }
+            set => Set(ref sendersPass, value); }
+        public int SmtpPort {
+            get
+            {
+                return smtpPort;
+            }
+            set => Set(ref smtpPort, value); }
     }
 }

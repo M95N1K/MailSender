@@ -23,11 +23,10 @@ namespace MailSender.Controls
         private int values = 0;
         public int Values
         {
-            get => values;
+            get { return (int)GetValue(ValuesProperty); }
             set
             {
-                values = value;
-                tValue.Text = value.ToString();
+               SetValue(ValuesProperty,value);
             }
         }
 
@@ -38,22 +37,53 @@ namespace MailSender.Controls
 
         private void Up_Click(object sender, RoutedEventArgs e)
         {
-            if (Int32.TryParse(tValue.Text, out values))
-                tValue.Text = (Values + 1).ToString();
+            values = (int)GetValue(ValuesProperty);
+            values++;
+            SetValue(ValuesProperty, values);
         }
 
         private void DownButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Int32.TryParse(tValue.Text, out values))
-                tValue.Text = (Values - 1).ToString();
+            values = (int)GetValue(ValuesProperty);
+            values--;
+            SetValue(ValuesProperty, values);
         }
 
         private void tValue_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!Int32.TryParse(tValue.Text, out values))
                 tValue.Text = (0).ToString();
+            else
+                Values = Int32.Parse(tValue.Text);
         }
 
-        
+        private FrameworkPropertyMetadata valuesMeta =
+            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault);
+
+        public static readonly DependencyProperty ValuesProperty = DependencyProperty.Register("Values", typeof(int),
+            typeof(SpinEdit), 
+            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,CurrentNumberChanged), 
+            new ValidateValueCallback(ValidateCurrentValues));
+
+        public static bool ValidateCurrentValues(object value)
+        {
+            try
+            {
+                Convert.ToInt32(value);
+            }
+            catch 
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private static void CurrentNumberChanged(DependencyObject depOgj, DependencyPropertyChangedEventArgs args)
+        {
+            SpinEdit s = (SpinEdit)depOgj;
+            TextBox theBox = s.tValue;
+            theBox.Text = args.NewValue.ToString();
+        }
+
     }
 }

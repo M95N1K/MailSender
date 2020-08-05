@@ -4,8 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MailSender.View"
+             xmlns:vm ="clr-namespace:MailSender.ViewModels"
+             xmlns:ctrl="clr-namespace:MailSender.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <vm:OptionSenderViewModel/>
+    </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -19,8 +24,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Label Content="Выберите отправителя" Margin="2,2" VerticalContentAlignment="Center" />
-            <ComboBox Margin="2,2" Grid.Column="1" ItemsSource="{Binding DataEmails}" 
-                                  SelectedValuePath="Id" DisplayMemberPath="Value" />
+            <ComboBox x:Name="cbSelectSenders" Margin="2,2" Grid.Column="1" />
         </Grid>
         <GroupBox Header="Настройки отправителя" Grid.Row="1">
             <Grid>
@@ -38,37 +42,14 @@
                 <Label Margin="2,2" Content="Пароль" VerticalAlignment="Center" Grid.Column="2"/>
                 <Label Margin="2,2" Content="SMTP Сервер" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
                 <Label Margin="2,2" Content="Порт сервера" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2"/>
-                <TextBox Margin="2,2" Grid.Column="1" Grid.Row="1"
+                <TextBox x:Name="tbSMTPServer" Margin="2,2" Grid.Column="1" Grid.Row="1"
                                      Text="{Binding OptionsApp.SmtpServ, UpdateSourceTrigger=PropertyChanged}"/>
-                <PasswordBox Margin="2,2" Grid.Column="3" Grid.Row="0" />
-                <Grid Grid.Column="3" Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="25"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox Margin="2,2" Grid.Column="0" 
-                                     Text="{Binding OptionsApp.SmtpPort, UpdateSourceTrigger=PropertyChanged}"/>
-                    <Grid Grid.Column="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Button Content="^" Grid.Row="0" Command="{Binding UpPortNumCommand}"/>
-                        <Button Content="^" Grid.Row="1" Command="{Binding DownPortNumCommand}" 
-                                            RenderTransformOrigin="0.5,0.5">
-                            <Button.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform/>
-                                    <SkewTransform/>
-                                    <RotateTransform Angle="180"/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </Button.RenderTransform>
-                        </Button>
-                    </Grid>
-                </Grid>
-                <TextBox Margin="2,2" Grid.Column="1" 
-                                     Text="{Binding OptionsApp.SendrsMail, UpdateSourceTrigger=PropertyChanged}"/>
+                <ctrl:MyPassBox Margin="2,2" Grid.Column="3" Grid.Row="0" 
+                                Pass="{Binding OptionsApp.SendrsPass, UpdateSourceTrigger=PropertyChanged}"/>
+                
+                <ctrl:SpinEdit Margin="2,2" Grid.Row="1" Grid.Column="3" Values="{Binding OptionsApp.SmtpPort}" />
+                <TextBox x:Name="tbSendersEmail" Margin="2,2" Grid.Column="1" 
+                         Text="{Binding OptionsApp.SendrsPass, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
         </GroupBox>
         <Grid Grid.Row="3">

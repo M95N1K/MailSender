@@ -10,6 +10,7 @@ namespace MailSender.Models
     {
         public string smtpServer;
         public string sendersMail;
+        public string sendersPass;
         public int smtpPort;
     }
 }

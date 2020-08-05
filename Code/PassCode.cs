@@ -29,6 +29,7 @@
 
         private static string Deciper(string pass, string key)
         {
+            if (pass.Length < 1) return "";
             string tmp = pass.Substring(1, pass.Length - 1);
             pass = tmp;
             string currentKey = GetNewKey(key, pass.Length);

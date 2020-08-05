@@ -11,7 +11,7 @@ using MailSender.Works;
 
 namespace MailSender.ViewModels
 {
-    class ErrorWindowViewModel : ViewModels.Base.ViewModel
+    internal class ErrorWindowViewModel : ViewModels.Base.ViewModel
     {
         private List<string> errors;
         

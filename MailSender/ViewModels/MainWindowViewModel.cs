@@ -28,7 +28,7 @@ namespace MailSender.ViewModels
         private int maxID;
         private List<string> recipientList = new List<string>();
         private IEnumerable<Email> dataEmails;
-        private OptionsViewModel optionsApp = new OptionsViewModel();
+        
         private readonly EmilesDataContext db = new EmilesDataContext();
         private Email email = new Email() { Value = "", Name=""};
         #endregion
@@ -40,7 +40,7 @@ namespace MailSender.ViewModels
         public string StatusBarStatus { get => statusBarStatus; set => Set(ref statusBarStatus, value); }
         public int CountSendMail { get => countSendMail; set => Set(ref countSendMail, value); }
         public List<string> RecipientList { get => recipientList; set => Set(ref recipientList, value); }
-        public OptionsViewModel OptionsApp { get => optionsApp; set => Set(ref optionsApp, value); }
+        
         public IEnumerable<Email> DataEmails { 
             get 
             {
@@ -99,43 +99,9 @@ namespace MailSender.ViewModels
         }
         #endregion
 
-        #region Команда принятия изменений в настройках
-        public ICommand ApllyChangeOptionCommand { get; }
-        private void OnApllyChageOptionsExecute(object p)
-        {
-            SmtpConfig.SetConfig(OptionsApp.SmtpServ, OptionsApp.SendrsMail, OptionsApp.SmtpPort);
-        }
-        private bool CanApllyChageOptionsExecute(object p)
-        {
-            return (OptionsApp.SmtpPort != SmtpConfig.Port ||
-                OptionsApp.SmtpServ != SmtpConfig.SmtpServer ||
-                OptionsApp.SendrsMail != SmtpConfig.SendersMail);
-        }
-        #endregion
+        
 
-        #region Отмена изменений настроек
-        public ICommand AbortChangeOptionsCommand { get; }
-        private void OnAbortChangeOptionsExecuted(object p)
-        {
-            GetOptions();
-        }
-        private bool CanAbortChangeOptionsExecute(object p) => true;
-        #endregion
-
-        #region Увеличение номера порта
-        public ICommand UpPortNumCommand { get; }
-        private void OnUpPortClick(object p)
-        {
-            OptionsApp.SmtpPort++;
-        }
-        private bool CanUpPortClick(object p) => true;
-        #endregion
-
-        #region Уменьшение номера порта
-        public ICommand DownPortNumCommand { get; }
-        private void OnDownPortClick(object p) => OptionsApp.SmtpPort--;
-        private bool CanDownPortClick(object p) => true;
-        #endregion
+        
 
         #region Добавление получателя
         public ICommand AddRecipientCommand { get; }
@@ -162,15 +128,12 @@ namespace MailSender.ViewModels
             CloseApplicationCommand = new LambdaCommand(OnCloseApplicationCommandEcecuted, CanCloseApplicationCommandExecute);
             ClearMailDataCommand = new LambdaCommand(OnClearMailDataExecuted, CanClearMailDataExecute);
             SendMailCommand = new LambdaCommand(OnSendMailExecuted, CanSendMailExecute);
-            ApllyChangeOptionCommand = new LambdaCommand(OnApllyChageOptionsExecute, CanApllyChageOptionsExecute);
-            AbortChangeOptionsCommand = new LambdaCommand(OnAbortChangeOptionsExecuted, CanAbortChangeOptionsExecute);
-            UpPortNumCommand = new LambdaCommand(OnUpPortClick, CanUpPortClick);
-            DownPortNumCommand = new LambdaCommand(OnDownPortClick, CanDownPortClick);
+            
+            
             AddRecipientCommand = new LambdaCommand(OnAddRecipientExecuted, CanAddRecipientExecute);
             #endregion
 
-            SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru", 25);
-            GetOptions();
+            SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru","g", 25);
             AppErrors.OnShowErrors += AppErrors_OnShowErrors;
             maxID = db.Email.Max(n => n.Id);
             DataEmails = from c in db.Email select c;
@@ -183,14 +146,7 @@ namespace MailSender.ViewModels
             tmp.ShowDialog();
         }
 
-        private void GetOptions()
-        {
-            #region SMTP Config
-            OptionsApp.SendrsMail = SmtpConfig.SendersMail;
-            OptionsApp.SmtpPort = SmtpConfig.Port;
-            OptionsApp.SmtpServ = SmtpConfig.SmtpServer;
-            #endregion
-        }
+        
 
         private int AddRecipient()
         {
