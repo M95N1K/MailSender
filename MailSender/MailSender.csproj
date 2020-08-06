@@ -86,8 +86,10 @@
       <DependentUpon>Emiles.dbml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ErrorWindowViewModel.cs" />
+    <Compile Include="ViewModels\MailVIewModel.cs" />
     <Compile Include="ViewModels\OptionSenderViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
+    <Compile Include="ViewModels\RecipientViewModel.cs" />
     <Compile Include="View\MailView.xaml.cs">
       <DependentUpon>MailView.xaml</DependentUpon>
     </Compile>

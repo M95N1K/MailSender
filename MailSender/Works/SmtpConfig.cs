@@ -11,6 +11,8 @@ namespace MailSender.Works
     {
         private static SmtpServerOptions smtpConf;
 
+        public static SmtpServerOptions GetConfig { get => smtpConf; }
+
         /// <summary> Возвращает SMTP сервер из настроек</summary>
         public static string SmtpServer { get => smtpConf.smtpServer; }
         /// <summary> Возвращает почтовый ящик отправителя из настроек</summary>

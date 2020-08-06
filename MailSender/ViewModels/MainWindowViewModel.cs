@@ -21,33 +21,31 @@ namespace MailSender.ViewModels
     {
         #region Поля
         private string title = "WPFMailSender";
-        private string mailHeader = "Заголовок";
-        private string mailBody = "Текст";
-        private string statusBarStatus = "Готово";
         private int countSendMail = 0;
-        private int maxID;
-        private List<string> recipientList = new List<string>();
-        private IEnumerable<Email> dataEmails;
+        private string statusBarStatus = "Загрузка";
         
-        private readonly EmilesDataContext db = new EmilesDataContext();
-        private Email email = new Email() { Value = "", Name=""};
         #endregion
 
         #region Свойства
         public string Title { get => title; set => Set(ref title, value); }
-        public string MailHeader { get => mailHeader; set => Set(ref mailHeader, value); }
-        public string MailBody { get => mailBody; set => Set(ref mailBody, value); }
-        public string StatusBarStatus { get => statusBarStatus; set => Set(ref statusBarStatus, value); }
-        public int CountSendMail { get => countSendMail; set => Set(ref countSendMail, value); }
-        public List<string> RecipientList { get => recipientList; set => Set(ref recipientList, value); }
-        
-        public IEnumerable<Email> DataEmails { 
+        public string CountSendMail 
+        { 
             get 
             {
-                return dataEmails;
+                if (countSendMail == 0)
+                    return "";
+                else return countSendMail.ToString();
             }
-            set => Set(ref dataEmails, value); }
-        public Email NewEmail { get => email; set => Set(ref email, value); }
+            set
+            {
+                int tmp;
+                if (!Int32.TryParse(value, out tmp))
+                    tmp = 0;
+                Set(ref countSendMail, tmp);
+            }
+        }
+        public string StatusBarStatus { get => statusBarStatus; set => Set(ref statusBarStatus, value); }
+        
         #endregion
 
         #region Команды
@@ -63,81 +61,28 @@ namespace MailSender.ViewModels
         private bool CanCloseApplicationCommandExecute(object p) => true;
         #endregion
 
-        #region Команда очистки полей письма
-        public ICommand ClearMailDataCommand { get; }
-
-        private void OnClearMailDataExecuted(object p)
-        {
-            MailBody = "";
-            MailHeader = "";
-        }
-
-        private bool CanClearMailDataExecute(object p)
-        {
-            return (MailHeader != "" || MailBody != "");
-        }
-        #endregion
-
-        #region Команда отправки письма
-        public ICommand SendMailCommand { get; }
-        private void OnSendMailExecuted(object p)
-        {
-            CountSendMail = 0;
-            StructMails mails;
-            mails.body = MailBody;
-            mails.header = MailHeader;
-            StatusBarStatus = "Отправка писем...";
-            GetEmilesToRecipient();
-            CountSendMail = SendMails.SendsMail(RecipientList, mails, "qwedsazxc");
-            StatusBarStatus = "Писем отправленно";
-            if (AppErrors.Count > 0)
-                AppErrors.ShowErrors();
-        }
-        private bool CanSendMailExecute(object p)
-        {
-            return (!MailHeader.Equals("") && MailBody != "" && RecipientList.Count > 0);
-        }
-        #endregion
-
-        
-
-        
-
-        #region Добавление получателя
-        public ICommand AddRecipientCommand { get; }
-        private void OnAddRecipientExecuted(object p)
-        { 
-            AddRecipient();
-            email.Name = "";
-            email.Value = "";
-            GetEmilesToRecipient();
-        }
-        private bool CanAddRecipientExecute(object p)
-        {
-            if (email.Value != "" && email.Name != "")
-                return true;
-            return false;
-        }
-        #endregion
-
         #endregion
 
         public MainWindowViewModel()
         {
             #region Создание команд
             CloseApplicationCommand = new LambdaCommand(OnCloseApplicationCommandEcecuted, CanCloseApplicationCommandExecute);
-            ClearMailDataCommand = new LambdaCommand(OnClearMailDataExecuted, CanClearMailDataExecute);
-            SendMailCommand = new LambdaCommand(OnSendMailExecuted, CanSendMailExecute);
-            
-            
-            AddRecipientCommand = new LambdaCommand(OnAddRecipientExecuted, CanAddRecipientExecute);
             #endregion
 
-            SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru","g", 25);
+            SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru", "qwedsazxcZ", 25);
             AppErrors.OnShowErrors += AppErrors_OnShowErrors;
-            maxID = db.Email.Max(n => n.Id);
-            DataEmails = from c in db.Email select c;
-            GetEmilesToRecipient();
+            SendMails.OnSendMails += SendMails_OnSendMails;
+            StatusBarStatus = "Готово";
+        }
+
+        private void SendMails_OnSendMails(int CountSendMail)
+        {
+            StatusBarStatus = "Писем отправленно ";
+            this.CountSendMail = CountSendMail.ToString();
+            if (CountSendMail == 0)
+                StatusBarStatus = "Ошибка при отправке";
+            if (AppErrors.Count > 0)
+                AppErrors.ShowErrors();
         }
 
         private void AppErrors_OnShowErrors()
@@ -148,31 +93,8 @@ namespace MailSender.ViewModels
 
         
 
-        private int AddRecipient()
-        {
-            int result = -1;
-            Email e = new Email();
-            e.Value = email.Value;
-            e.Name = email.Name;
-            e.Id = ++maxID;
-            result = e.Id;
-            try
-            {
-                db.Email.InsertOnSubmit(e);
-                db.SubmitChanges();
-            }
-            catch
-            {
-                AppErrors.AddError($"Ошибка добавления получателя ({email.Value} - {email.Name})");
-            }
-            
-            DataEmails = from c in db.Email select c;
-            return result;
-        }
+        
 
-        private void GetEmilesToRecipient()
-        {
-            RecipientList = db.Email.Select(n => n.Value).ToList<string>();
-        }
+        
     }
 }

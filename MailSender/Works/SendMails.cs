@@ -11,43 +11,77 @@ namespace MailSender.Works
 {
     public static class SendMails
     {
+        public delegate void OnSend(int CountSendMail);
+        public static event OnSend OnSendMails;
+
+        public static List<string> RecipientList { get; set; } = new List<string>();
+
         /// <summary>
         /// Отправляет письмо списку адрессов
         /// </summary>
-        /// <param name="recipientsMail">Список адрессов</param>
         /// <param name="mail">Само письмо</param>
-        /// <param name="pass">Пароль почтового ящика для отправки писем</param>
         /// <returns></returns>
-        public static int SendsMail(List<string> recipientsMail, StructMails mail, string pass)
+        public static int SendsMail(StructMails mail)
         {
             int count = 0;
 
-            foreach (string recipient in recipientsMail)
+            foreach (string recipient in RecipientList)
             {
                 try
                 {
-                    using (MailMessage mm = new MailMessage(SmtpConfig.SendersMail, recipient))
-                    {
-                        mm.Subject = mail.header;
-                        mm.Body = mail.body;
-                        mm.IsBodyHtml = false;
-                        using (SmtpClient sc = new SmtpClient(SmtpConfig.SmtpServer, SmtpConfig.Port))
-                        {
-                            sc.EnableSsl = true;
-                            sc.DeliveryMethod = SmtpDeliveryMethod.Network;
-                            sc.UseDefaultCredentials = false;
-                            sc.Credentials = new NetworkCredential(SmtpConfig.SendersMail, pass);
-                            sc.Send(mm);
-                        }
-                    }
-                    count++;
+                    if (SendOneMail(mail, recipient))
+                        count++;
                 }
-                catch
+                catch (SmtpException)
                 {
-                    AppErrors.AddError($"Ошибка при отправке письма по адрессу \"{recipient}\"");
+                    break;
                 }
+                
             }
+            OnSendMails?.Invoke(count);
             return count;
+        }
+
+        /// <summary>
+        /// Отправка письма на один адресс
+        /// </summary>
+        /// <param name="mail">Структура письм</param>
+        /// <param name="recipient">Получатель</param>
+        /// <exception cref="SmtpException"></exception>
+        /// <returns>Возвращает true если письмо отправленно</returns>
+        private static bool SendOneMail(StructMails mail, string recipient)
+        {
+            bool result = false;
+            try
+            {
+                using (MailMessage mm = new MailMessage(SmtpConfig.SendersMail, recipient))
+                {
+                    mm.Subject = mail.header;
+                    mm.Body = mail.body;
+                    mm.IsBodyHtml = false;
+                    using (SmtpClient sc = new SmtpClient(SmtpConfig.SmtpServer, SmtpConfig.Port))
+                    {
+                        sc.EnableSsl = true;
+                        sc.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        sc.UseDefaultCredentials = false;
+                        sc.Credentials = new NetworkCredential(SmtpConfig.SendersMail, SmtpConfig.SendersPass);
+                        sc.Send(mm);
+                    }
+                }
+                result = true;
+            }
+            catch (SmtpException e)
+            {
+                AppErrors.AddError("Ошибка работы с SMTP сервером");
+                AppErrors.AddError(e.Message);
+                throw;
+            }
+            catch (Exception e)
+            {
+                AppErrors.AddError($"Ошибка при отправке письма по адрессу \"{recipient}\"");
+                AppErrors.AddError(e.Message);
+            }
+            return result;
         }
     }
 }

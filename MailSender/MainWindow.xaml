@@ -5,10 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailSender"
         xmlns:vm ="clr-namespace:MailSender.ViewModels"
-        
         xmlns:uv="clr-namespace:MailSender.View"
-        
-        
         mc:Ignorable="d"
         Title="{Binding Title}" Height="450" Width="800">
     <Window.DataContext>
