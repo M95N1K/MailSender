@@ -69,7 +69,7 @@ namespace MailSender.ViewModels
             CloseApplicationCommand = new LambdaCommand(OnCloseApplicationCommandEcecuted, CanCloseApplicationCommandExecute);
             #endregion
 
-            SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru", "qwedsazxcZ", 25);
+            SmtpConfig.SetConfig("smtp.mail.ru", "vasilii_pupkin_83@mail.ru", "qwedsazxc", 25);
             AppErrors.OnShowErrors += AppErrors_OnShowErrors;
             SendMails.OnSendMails += SendMails_OnSendMails;
             StatusBarStatus = "Готово";
