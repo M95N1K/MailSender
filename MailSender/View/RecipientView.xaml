@@ -15,14 +15,27 @@
             <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <DataGrid x:Name="dGrid" Grid.Column="0" Margin="2,2" ItemsSource="{Binding DataEmails}" 
-                              AutoGenerateColumns="False" IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="auto"/>
-                <DataGridTextColumn Header="Почта" Binding="{Binding Value}" Width="auto"/>
-                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <Label Content="Фильтр" Margin="2,2" VerticalContentAlignment="Center"/>
+                <TextBox Margin="2,2" MinWidth="150" Width="250" 
+                         Text="{Binding FilterName, UpdateSourceTrigger=PropertyChanged,Delay=100}"/>
+            </StackPanel>
+            <DataGrid x:Name="dGrid" Grid.Column="0" Grid.Row="1" 
+                      Margin="2,2" ItemsSource="{Binding DataEmails}" 
+                      AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="auto"/>
+                    <DataGridTextColumn Header="Почта" Binding="{Binding Value}" Width="auto"/>
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>

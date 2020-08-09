@@ -8,6 +8,9 @@ using System.Windows.Input;
 using MailSender.Infrastructure.Commands;
 using MailSender.Works;
 using System.Data.Linq;
+using System.Windows.Data;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace MailSender.ViewModels
 {
@@ -15,15 +18,40 @@ namespace MailSender.ViewModels
     {
 
         private int maxID;
-        //private List<string> recipientList = new List<string>();
-        private IEnumerable<Email> dataEmails;
+        private string filterName;
+        private ObservableCollection<Email> dataEmails;
+        private CollectionViewSource _emailsView;
         private readonly EmilesDataContext db = new EmilesDataContext();
         private Email email = new Email() { Value = "", Name = "" };
 
-        //public List<string> RecipientList { get => recipientList; set => Set(ref recipientList, value); }
-        public IEnumerable<Email> DataEmails{get =>dataEmails; set => Set(ref dataEmails, value);}
+        public ICollectionView DataEmails => _emailsView?.View;
+        public ObservableCollection<Email> Emails{get =>dataEmails;
+            set
+            {
+                if (!Set(ref dataEmails, value)) return;
+                _emailsView = new CollectionViewSource { Source = value };
+                _emailsView.Filter += EmailsView_Filter;
+                OnPropertyChenged(nameof(DataEmails));
+            }
+                
+                }
+
+        private void EmailsView_Filter(object sender, FilterEventArgs e)
+        {
+            if (!(e.Item is Email email) || string.IsNullOrWhiteSpace(filterName)) return;
+            if (!email.Name.Contains(filterName))
+                e.Accepted = false;
+        }
+
         public Email NewEmail { get => email; set => Set(ref email, value); }
         public Table<Email> Db { get => db.Email; }
+        public string FilterName { get => filterName;
+            set 
+            {
+                if (!Set(ref filterName, value)) return;
+                DataEmails.Refresh();
+            } 
+        }
 
         #region Команды
 
@@ -45,6 +73,7 @@ namespace MailSender.ViewModels
         #endregion
 
         #endregion
+
         private int AddRecipient()
         {
             int result = -1;
@@ -66,14 +95,25 @@ namespace MailSender.ViewModels
             if (AppErrors.Count > 0)
                 AppErrors.ShowErrors();
 
-            DataEmails = from c in db.Email select c;
+            Emails = GetEmails();
             return result;
         }
 
         private void GetEmilesToRecipient()
         {
-            //RecipientList = db.Email.Select(n => n.Value).ToList<string>();
             SendMails.RecipientList = db.Email.Select(n => n.Value).ToList<string>();
+        }
+
+        private ObservableCollection<Email> GetEmails()
+        {
+            ObservableCollection<Email> result = new ObservableCollection<Email>();
+
+            foreach (var item in db.Email)
+            {
+                result.Add(item);
+            }
+
+            return result;
         }
 
         public RecipientViewModel()
@@ -82,7 +122,7 @@ namespace MailSender.ViewModels
             AddRecipientCommand = new LambdaCommand(OnAddRecipientExecuted, CanAddRecipientExecute);
             #endregion
             maxID = db.Email.Max(n => n.Id);
-            DataEmails = from c in db.Email select c;
+            Emails = GetEmails();
             GetEmilesToRecipient();
         }
 
