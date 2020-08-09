@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using MailSender.Models;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace MailSender.Works
 {
@@ -37,7 +38,7 @@ namespace MailSender.Works
         /// </summary>
         /// <param name="mail">Само письмо</param>
         /// <returns></returns>
-        public static int SendsMail(StructMails mail)
+        public static void SendsMail(StructMails mail)
         {
             count = 0;
             listThread = new List<Thread>();
@@ -60,21 +61,6 @@ namespace MailSender.Works
                 }
 
             }
-            #region Ожидаем окончания всех дочерних потоков
-            bool flag = true;
-            while (flag)
-            {
-                flag = false;
-                foreach (var item in listThread)
-                {
-                    if (item.IsAlive)
-                        flag = true;
-                }
-            } 
-            #endregion
-
-            OnSendMails?.Invoke(count);
-            return count;
         }
 
         /// <summary>
@@ -83,7 +69,7 @@ namespace MailSender.Works
         /// <exception cref="FormatException">Возникает при неверном объекте параметров</exception>
         /// <exception cref="SmtpException">Ошибка при работе с SMTP</exception>
         /// <param name="param"> Объект класса SendParam</param>
-        public static void SendOneMail(object param)
+        private static void SendOneMail(object param)
         {
             if (!(param is SendParam))
                 throw new FormatException("Неверный входной параметр");
@@ -118,6 +104,19 @@ namespace MailSender.Works
                 AppErrors.AddError($"Ошибка при отправке письма по адрессу \"{recipient}\"");
                 AppErrors.AddError(e.Message);
             }
+            finally
+            {
+                Thread t = Thread.CurrentThread;
+                DelThread(t);
+            }
+        }
+
+        private static void DelThread(Thread thread)
+        {
+            if (listThread.Count > 0)
+                listThread.Remove(thread);
+            if (listThread.Count == 0)
+                OnSendMails?.Invoke(count);
         }
     }
 }
