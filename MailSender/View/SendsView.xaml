@@ -4,9 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MailSender.View"
+             xmlns:vm="clr-namespace:MailSender.ViewModels"
              xmlns:tk ="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <vm:SendsViewModel/>
+    </UserControl.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="180"/>
@@ -24,7 +28,7 @@
             <Calendar Grid.Row="0"/>
             <tk:TimePicker Grid.Row="1" Margin="2,2" ShowDropDownButton="False" Text="0" />
             <Button Grid.Row="2" Content="Заплонировать" Margin="2,2"/>
-            <Button Grid.Row="3" Content="Отправить" Command="{Binding SendMailCommand}" Margin="2,2"/>
+            <Button Grid.Row="3" Content="Отправить" Command="{Binding SendPlaneCommand}" Margin="2,2"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -80,6 +80,8 @@
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\Interfaces\IMergeableClass.cs" />
+    <Compile Include="Infrastructure\Interfaces\IUnionClass.cs" />
     <Compile Include="Models\DBModels\Emiles.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -90,6 +92,7 @@
     <Compile Include="ViewModels\OptionSenderViewModel.cs" />
     <Compile Include="ViewModels\OptionsViewModel.cs" />
     <Compile Include="ViewModels\RecipientViewModel.cs" />
+    <Compile Include="ViewModels\SendsViewModel.cs" />
     <Compile Include="View\MailView.xaml.cs">
       <DependentUpon>MailView.xaml</DependentUpon>
     </Compile>
@@ -111,6 +114,7 @@
     <Compile Include="Models\StructSmptOptions.cs" />
     <Compile Include="ViewModels\Base\ViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="Works\UnionClass.cs" />
     <Page Include="Controls\MyPassBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

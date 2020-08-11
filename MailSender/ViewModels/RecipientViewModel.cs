@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using MailSender.Models.DBModels;
 using System.Linq;
-using System.Text;
+using static MailSender.Works.UnionClass;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MailSender.Infrastructure.Commands;
+using MailSender.Infrastructure.Interfaces;
 using MailSender.Works;
 using System.Data.Linq;
 using System.Windows.Data;
@@ -14,7 +15,7 @@ using System.Collections.ObjectModel;
 
 namespace MailSender.ViewModels
 {
-    internal class RecipientViewModel: Base.ViewModel
+    internal class RecipientViewModel: Base.ViewModel, IMergeableClass
     {
 
         private int maxID;
@@ -23,6 +24,7 @@ namespace MailSender.ViewModels
         private CollectionViewSource _emailsView;
         private readonly EmilesDataContext db = new EmilesDataContext();
         private Email email = new Email() { Value = "", Name = "" };
+        private string _name= "RecipientVM";
 
         public ICollectionView DataEmails => _emailsView?.View;
         public ObservableCollection<Email> Emails{get =>dataEmails;
@@ -35,14 +37,13 @@ namespace MailSender.ViewModels
             }
                 
                 }
-
+        public string Name { get => _name; set => _name=value; }
         private void EmailsView_Filter(object sender, FilterEventArgs e)
         {
             if (!(e.Item is Email email) || string.IsNullOrWhiteSpace(filterName)) return;
             if (!email.Name.Contains(filterName))
                 e.Accepted = false;
         }
-
         public Email NewEmail { get => email; set => Set(ref email, value); }
         public Table<Email> Db { get => db.Email; }
         public string FilterName { get => filterName;
@@ -57,6 +58,8 @@ namespace MailSender.ViewModels
 
         #region Добавление получателя
         public ICommand AddRecipientCommand { get; }
+        
+
         private void OnAddRecipientExecuted(object p)
         {
             AddRecipient();
@@ -124,6 +127,7 @@ namespace MailSender.ViewModels
             maxID = db.Email.Max(n => n.Id);
             Emails = GetEmails();
             GetEmilesToRecipient();
+            AddMergClass(this);
         }
 
     }
