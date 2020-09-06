@@ -38,7 +38,8 @@ namespace MailSender.Works
         /// <summary>Запускает событие OnShowErrors для вывода ошибок</summary>
         public static void ShowErrors()
         {
-            OnShowErrors?.Invoke();
+            if (Count > 0)
+                OnShowErrors?.Invoke();
         }
     }
 }

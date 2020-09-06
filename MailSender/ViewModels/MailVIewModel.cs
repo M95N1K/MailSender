@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MailSender.Infrastructure.Commands;
+using MailSender.Infrastructure.Interfaces;
 
 namespace MailSender.ViewModels
 {
@@ -32,7 +33,8 @@ namespace MailSender.ViewModels
         }
         private bool CanSendMailExecute(object p)
         {
-            return (!MailHeader.Equals("") && MailBody != "" && SendMails.RecipientList.Count > 0);
+            IEmailData tmp = (IEmailData)UnionClass.MergClasses["EmailDate"];
+            return (!MailHeader.Equals("") && MailBody != "" && (tmp.EmailDate.Count > 0));
         }
         #endregion
         #region ClearMailDataCommand Команда очистки полей письма

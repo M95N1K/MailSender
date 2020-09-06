@@ -8,6 +8,9 @@ using MailSender.Models;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MailSender.Infrastructure.Interfaces;
+using System.Collections.ObjectModel;
+using MailSender.Models.DBModels;
 
 namespace MailSender.Works
 {
@@ -31,7 +34,7 @@ namespace MailSender.Works
         public static event OnSend OnSendMails;
 
         private static volatile int count;
-        public static List<string> RecipientList { get; set; } = new List<string>();
+        public static ObservableCollection<Email> RecipientList { get; set; } 
 
         /// <summary>
         /// Отправляет письмо списку адрессов
@@ -43,7 +46,9 @@ namespace MailSender.Works
         {
             List<Task> tasks = new List<Task>();
             Task allTask = null;
+            
             count = 0;
+            //Проверка SMTP сервера
             try
             {
                 using (SmtpClient sc = new SmtpClient(SmtpConfig.SmtpServer, SmtpConfig.Port))
@@ -62,11 +67,14 @@ namespace MailSender.Works
                 return;
             }
             
+            //Отправка писем
+            IEmailData emails = (IEmailData)UnionClass.MergClasses["EmailDate"];
+            RecipientList = emails.EmailDate;
             try
             {
                 foreach (var recipient in RecipientList)
                 {
-                    SendParam tmp = new SendParam(mail, recipient);
+                    SendParam tmp = new SendParam(mail, recipient.Value);
                     tasks.Add(Task.Run(() => SendOneMail(tmp)));
                 }
                 allTask = Task.WhenAll(tasks);
@@ -122,10 +130,6 @@ namespace MailSender.Works
             }
         }
 
-        //private static void DelThread(Thread thread)
-        //{
-           
-        //        OnSendMails?.Invoke(count);
-        //}
+        
     }
 }

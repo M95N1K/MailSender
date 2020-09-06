@@ -80,6 +80,7 @@
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\Interfaces\IEmailData.cs" />
     <Compile Include="Infrastructure\Interfaces\IMergeableClass.cs" />
     <Compile Include="Infrastructure\Interfaces\IUnionClass.cs" />
     <Compile Include="Models\DBModels\Emiles.designer.cs">
@@ -106,6 +107,7 @@
       <DependentUpon>SendsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Works\AppErrors.cs" />
+    <Compile Include="Works\EmailDateBase.cs" />
     <Compile Include="Works\SendMails.cs" />
     <Compile Include="Works\SmtpConfig.cs" />
     <Compile Include="Infrastructure\Commands\Base\Command.cs" />

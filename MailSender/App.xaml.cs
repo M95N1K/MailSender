@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using MailSender.Infrastructure.Interfaces;
+using MailSender.Works;
 
 namespace MailSender
 {
@@ -13,5 +15,6 @@ namespace MailSender
     /// </summary>
     public partial class App : Application
     {
+      private IEmailData emailTmp =  new EmailDateBase();
     }
 }
