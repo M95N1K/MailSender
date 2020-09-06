@@ -81,8 +81,9 @@ namespace MailSender.ViewModels
             this.CountSendMail = CountSendMail.ToString();
             if (CountSendMail == 0)
                 StatusBarStatus = "Ошибка при отправке";
-            if (AppErrors.Count > 0)
-                AppErrors.ShowErrors();
+            ReportsCreate reports = new ReportsCreate("report.docx");
+            reports.Create();
+            AppErrors.ShowErrors();
         }
 
         private void AppErrors_OnShowErrors()
