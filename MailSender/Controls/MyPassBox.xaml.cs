@@ -21,7 +21,7 @@ namespace MailSender.Controls
     public partial class MyPassBox : UserControl
     {
 
-        private string _pass = "";
+        //private string _pass = "";
         
         public string Pass 
         { 

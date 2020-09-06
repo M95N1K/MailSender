@@ -7,6 +7,7 @@ using System.Threading;
 using MailSender.Models;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace MailSender.Works
 {
@@ -30,7 +31,6 @@ namespace MailSender.Works
         public static event OnSend OnSendMails;
 
         private static volatile int count;
-        private static List<Thread> listThread;
         public static List<string> RecipientList { get; set; } = new List<string>();
 
         /// <summary>
@@ -38,28 +38,50 @@ namespace MailSender.Works
         /// </summary>
         /// <param name="mail">Само письмо</param>
         /// <returns></returns>
-        public static void SendsMail(StructMails mail)
+
+        public async static void SendMailsAsync(StructMails mail)
         {
+            List<Task> tasks = new List<Task>();
+            Task allTask = null;
             count = 0;
-            listThread = new List<Thread>();
-            foreach (string recipient in RecipientList)
+            try
             {
-                try
+                using (SmtpClient sc = new SmtpClient(SmtpConfig.SmtpServer, SmtpConfig.Port))
+                {
+                    sc.EnableSsl = true;
+                    sc.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    sc.UseDefaultCredentials = false;
+                    sc.Credentials = new NetworkCredential(SmtpConfig.SendersMail, SmtpConfig.SendersPass);
+                    sc.Send(SmtpConfig.SendersMail, "mmgsd@mail.jp", "", "");
+                }
+            }
+            catch (Exception e)
+            {
+                AppErrors.AddError($"Ошибка отправителя\n {e.Message}");
+                OnSendMails?.Invoke(count);
+                return;
+            }
+            
+            try
+            {
+                foreach (var recipient in RecipientList)
                 {
                     SendParam tmp = new SendParam(mail, recipient);
-                    Thread thread = new Thread(new ParameterizedThreadStart(SendOneMail));
-                    thread.Start(tmp);
-                    listThread.Add(thread);
+                    tasks.Add(Task.Run(() => SendOneMail(tmp)));
                 }
-                catch (SmtpException)
+                allTask = Task.WhenAll(tasks);
+                await allTask;
+            }
+            catch (Exception)
+            {
+                foreach (var item in allTask.Exception.InnerExceptions)
                 {
-                    break;
+                    AppErrors.AddError(item.Message);
                 }
-                catch (FormatException)
-                {
-                    break;
-                }
-
+            }
+            finally
+            {
+                OnSendMails?.Invoke(count);
             }
         }
 
@@ -93,30 +115,17 @@ namespace MailSender.Works
                 }
                 count++;
             }
-            catch (SmtpException e)
-            {
-                AppErrors.AddError("Ошибка работы с SMTP сервером");
-                AppErrors.AddError(e.Message);
-                throw;
-            }
+            
             catch (Exception e)
             {
-                AppErrors.AddError($"Ошибка при отправке письма по адрессу \"{recipient}\"");
-                AppErrors.AddError(e.Message);
-            }
-            finally
-            {
-                Thread t = Thread.CurrentThread;
-                DelThread(t);
+                throw new Exception($"Ошибка с почтой {recipient} \n{e.Message}");
             }
         }
 
-        private static void DelThread(Thread thread)
-        {
-            if (listThread.Count > 0)
-                listThread.Remove(thread);
-            if (listThread.Count == 0)
-                OnSendMails?.Invoke(count);
-        }
+        //private static void DelThread(Thread thread)
+        //{
+           
+        //        OnSendMails?.Invoke(count);
+        //}
     }
 }

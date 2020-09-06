@@ -27,7 +27,8 @@ namespace MailSender.ViewModels
             StructMails mails;
             mails.body = MailBody;
             mails.header = MailHeader;
-            SendMails.SendsMail(mails);
+            SendMails.SendMailsAsync(mails);
+            //AppErrors.ShowErrors();
         }
         private bool CanSendMailExecute(object p)
         {
