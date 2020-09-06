@@ -94,6 +94,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Emiles.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="ViewModels\ErrorWindowViewModel.cs" />
     <Compile Include="ViewModels\MailVIewModel.cs" />
     <Compile Include="ViewModels\OptionSenderViewModel.cs" />
